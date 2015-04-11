@@ -35,11 +35,11 @@ public class Scraper {
     // constructor
     public Scraper()
     {
-        linkPattern = Pattern.compile(".*(<a href=\"indiv_upload.php).*");
-        linkPattern = Pattern.compile(".*(<a href=\'indiv_upload.php).*");
-        linkPattern = Pattern.compile("(?<=.*<a href).*(?=(PHPSESSID).*)");
-        linkPattern = Pattern.compile("^(?<=.*(<a href))[a-z_.?=0-9&;A-Z]*.*(style).*");
-        linkPattern = Pattern.compile("(a href)");
+        //linkPattern = Pattern.compile(".*(<a href=\"indiv_upload.php).*");
+        //linkPattern = Pattern.compile(".*(<a href=\'indiv_upload.php).*");
+        //linkPattern = Pattern.compile("(?<=.*<a href).*(?=(PHPSESSID).*)");
+        //linkPattern = Pattern.compile("^(?<=.*(<a href))[a-z_.?=0-9&;A-Z]*.*(style).*");
+        //linkPattern = Pattern.compile("(a href)");
         //linkPattern = Pattern.compile(".*(<!DOCTYPE html PUBLIC).*");
 
         images = new ArrayList<ImageDescriptor>(10);
@@ -94,6 +94,7 @@ public class Scraper {
                         // not blank?
                         if (image != null)
                         {
+                            image.homeUrl = pageUrl;
                             images.add(image);
                         }
                     }
@@ -114,6 +115,10 @@ public class Scraper {
                 // nothing to see here
             }
         }
+
+        // done?
+        int n = images.size();
+        System.out.println("Found " + n + " images.");
     }
 
     // visit the link of the image, and get the real photo url
@@ -133,6 +138,7 @@ public class Scraper {
         String imageUrl = "";
         String imageTitle = "";
         String imageDescription = "";
+        String imageLocation = "";
 
         // make full
         String fullUrl = pageUrl + subPart;
@@ -171,7 +177,7 @@ public class Scraper {
                     if (descriptionEnd >= 0)
                     {
                         // extract it
-                        imageTitle = line.substring(descriptionStart+28, descriptionEnd);
+                        imageTitle = line.substring(descriptionStart+29, descriptionEnd);
                         //foundSomething = true;
                     }
                 }
@@ -185,7 +191,7 @@ public class Scraper {
                     if (descriptionEnd >= 0)
                     {
                         // extract it
-                        imageTitle = line.substring(descriptionStart+31, descriptionEnd);
+                        imageLocation = line.substring(descriptionStart+31, descriptionEnd);
                         //foundSomething = true;
                     }
                 }
@@ -200,7 +206,7 @@ public class Scraper {
                     if (descriptionEnd >= 0)
                     {
                         // extract it
-                        imageTitle = line.substring(descriptionStart+34, descriptionEnd);
+                        imageDescription = line.substring(descriptionStart+34, descriptionEnd);
                         //foundSomething = true;
                     }
                 }
@@ -251,6 +257,7 @@ public class Scraper {
             image = new ImageDescriptor();
             image.imageUrl = imageUrl;
             image.description  = imageDescription;
+            image.title = imageTitle;
         }
 
         return image;
