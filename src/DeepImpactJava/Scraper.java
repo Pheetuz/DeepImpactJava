@@ -141,6 +141,13 @@ public class Scraper {
         // return
         ImageDescriptor image = null;
 
+        // start and end of title
+        int titleStart = -1;
+        int titleEnd = -1;
+        // start and end of description
+        int descriptionStart = -1;
+        int descriptionEnd = -1;
+
         //positions
         int positionFirst = -1;
 
@@ -155,6 +162,51 @@ public class Scraper {
                 // search for the image url
                 // first earch for the line above, which as something like "<a href="full_image.php?image_name=Jake-Stehli-aurora_1428774882.jpg" id="main_pic_link" class="image" target="blank" style="text-decoration: none;"><img src="http://0e33611cb8e6da737d5c-e13b5a910e105e07f9070866adaae10b.r15.cf1.rackcdn.com/Jake-Stehli-aurora_1428774882_lg.jpg" border="0" class="imgborder" name="main_pic" id="main_pic"></a>"
 
+                ///////////////////////////////////////////////////////////////////////////////
+                // search for the title
+                descriptionStart = line.indexOf("<span class=\"photoTitleText\">");
+                if (descriptionStart >= 0)
+                {
+                    descriptionEnd = line.indexOf("</span>", descriptionStart);
+                    if (descriptionEnd >= 0)
+                    {
+                        // extract it
+                        imageTitle = line.substring(descriptionStart+28, descriptionEnd);
+                        //foundSomething = true;
+                    }
+                }
+
+                ///////////////////////////////////////////////////////////////////////////////
+                // search for the location
+                descriptionStart = line.indexOf("<span class=\"photoLocationText\">");
+                if (descriptionStart >= 0)
+                {
+                    descriptionEnd = line.indexOf("</span>", descriptionStart);
+                    if (descriptionEnd >= 0)
+                    {
+                        // extract it
+                        imageTitle = line.substring(descriptionStart+31, descriptionEnd);
+                        //foundSomething = true;
+                    }
+                }
+
+
+                ///////////////////////////////////////////////////////////////////////////////
+                // search for the description
+                descriptionStart = line.indexOf("<span class=\"imageDescriptionText\">");
+                if (descriptionStart >= 0)
+                {
+                    descriptionEnd = line.indexOf("</span>", descriptionStart);
+                    if (descriptionEnd >= 0)
+                    {
+                        // extract it
+                        imageTitle = line.substring(descriptionStart+34, descriptionEnd);
+                        //foundSomething = true;
+                    }
+                }
+
+
+                /////////////////////////////////////////////////////////////////////////////////
                 if (positionFirst == -1) positionFirst = line.indexOf("<a href=\"full_image.php");
                 //if (positionFirst >= 0) continue;
 
@@ -174,9 +226,7 @@ public class Scraper {
                             imageUrl = line.substring(positionStart + 10, positionEnd);
                             System.out.println("Found Image!");
 
-                            // bundle it up in an image and break
-                            image = new ImageDescriptor();
-                            image.imageUrl = imageUrl;
+                            foundSomething = true;
                         }
                     }
                     positionFirst = -1;
